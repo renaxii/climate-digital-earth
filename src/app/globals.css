@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --panel: rgba(8, 20, 36, 0.58);
+  --panel-strong: rgba(9, 24, 42, 0.82);
+  --panel-border: rgba(156, 206, 255, 0.14);
+  --text-primary: #e7f3ff;
+  --text-secondary: rgba(231, 243, 255, 0.74);
+  --text-dim: rgba(231, 243, 255, 0.54);
+}
+
+html {
+  scroll-behavior:smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-primary);
+  background:
+    radial-gradient(circle at top, rgba(44, 116, 188, 0.45), transparent 28%),
+    radial-gradient(circle at 20% 20%, rgba(41, 192, 176, 0.2), transparent 22%),
+    linear-gradient(180deg, #020813 0%, #061323 45%, #04111e 100%);
+  font-family: var(--font-body), sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(98, 189, 255, 0.3);
+}
+
+.glass-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(24px);
+}
+
+.glass-panel-strong {
+  background: var(--panel-strong);
+  border: 1px solid rgba(180, 220, 255, 0.16);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(24px);
+}
+
+.focus-ring {
+  outline: none;
+}
+
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 2px rgba(126, 224, 255, 0.9), 0 0 0 6px rgba(12, 54, 92, 0.9);
+}
+
+.safe-viewport {
+  min-height: 100svh;
+}
