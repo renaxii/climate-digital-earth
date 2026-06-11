@@ -8,7 +8,7 @@ import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { climateLayers, regions, scenarios, stories } from "@/data/climateData";
+import { climateLayers, latestObservedYear, regions, scenarios, stories } from "@/data/climateData";
 import { useClimateStore } from "@/stores/useClimateStore";
 import { TimelineSlider } from "@/components/timeline/timeline-slider";
 import { StoryModePanel } from "@/components/story/story-mode-panel";
@@ -33,6 +33,7 @@ export function ExplorerPage() {
     isPlaying,
     activeStoryId,
     selectedRegionId,
+    focusedCountry,
     selectedScenario,
     highContrast,
     setSelectedLayer,
@@ -41,6 +42,7 @@ export function ExplorerPage() {
     advanceYear,
     goToYear,
     setSelectedRegionId,
+    setFocusedCountry,
     setSelectedScenario,
     toggleHighContrast,
     startStory,
@@ -127,7 +129,7 @@ export function ExplorerPage() {
 
             <Card className="space-y-4">
               <SectionHeading eyebrow="Search" title="Region explorer" description="Search or choose a region to inspect trend summaries and key observations." />
-              <RegionExplorer selectedRegionId={selectedRegionId} onSelectRegion={setSelectedRegionId} onClearStory={stopStory} />
+              <RegionExplorer selectedRegionId={selectedRegionId} onSelectRegion={setSelectedRegionId} onSelectCountry={setFocusedCountry} onClearStory={stopStory} />
             </Card>
           </aside>
 
@@ -147,9 +149,9 @@ export function ExplorerPage() {
               <SectionHeading eyebrow="Metrics" title="What changed this year" description="A compact readout of the active layer and region based on the current timeline position." />
               <div className="grid grid-cols-2 gap-3">
                 <Metric label="Year" value={selectedYear.toString()} />
-                <Metric label="Region" value={activeRegion.name} />
+                <Metric label="Location" value={focusedCountry ? focusedCountry.name : activeRegion.name} />
                 <Metric label="Layer" value={activeLayer.shortLabel} />
-                <Metric label="Story" value={activeStory ? activeStory.title : "Free explore"} />
+                <Metric label="Data" value={selectedYear <= latestObservedYear ? "Observed" : "Projected"} />
               </div>
               <div className="rounded-3xl bg-white/5 p-4 text-sm leading-6 text-white/72">{activeLayer.explanation}</div>
             </Card>

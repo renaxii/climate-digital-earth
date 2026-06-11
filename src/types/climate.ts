@@ -18,6 +18,7 @@ export interface ClimateYearPoint {
   wildfire: number;
   emissions: number;
   seaLevel: number;
+  observed?: boolean;
 }
 
 export interface CountryFocusTarget {
@@ -38,6 +39,10 @@ export interface GeoCountryFeature {
     iso_a2?: string;
     region?: string;
     subregion?: string;
+    centroid?: {
+      lat: number;
+      lon: number;
+    };
   };
   geometry: {
     type: "Polygon" | "MultiPolygon";
@@ -45,13 +50,32 @@ export interface GeoCountryFeature {
   };
 }
 
+export interface GeoCountryFeatureCollection {
+  type: "FeatureCollection";
+  metadata?: {
+    generatedAt: string;
+    source: string;
+    notes?: string[];
+  };
+  features: GeoCountryFeature[];
+}
+
 export interface GeneratedClimateDataset {
   metadata: {
     generatedAt: string;
+    latestObservedYear: number;
     sources: Record<string, string>;
     notes: string[];
   };
   series: ClimateYearPoint[];
+}
+
+export interface GeneratedCountryFocusDataset {
+  metadata: {
+    generatedAt: string;
+    source: string;
+  };
+  countries: CountryFocusTarget[];
 }
 
 export interface RegionDatum {

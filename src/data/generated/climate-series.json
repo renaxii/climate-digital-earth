@@ -1,0 +1,517 @@
+{
+  "metadata": {
+    "generatedAt": "2026-06-09T20:49:00.802Z",
+    "latestObservedYear": 2024,
+    "sources": {
+      "nasaGistemp": "https://data.giss.nasa.gov/gistemp/tabledata_v4/GLB.Ts+dSST.csv",
+      "noaaCo2": "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_annmean_gl.txt",
+      "nasaSeaLevel": "NASA satellite altimetry global mean sea level values, normalized to 1993 baseline.",
+      "noaaNsidcSeaIce": "NOAA/NSIDC September Arctic sea ice minimum extent values in million square kilometers.",
+      "countries": "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+    },
+    "notes": [
+      "Temperature values are NASA GISTEMP annual global surface temperature anomalies in degrees Celsius.",
+      "Emissions layer uses NOAA Global Monitoring Laboratory annual mean atmospheric CO2 in ppm.",
+      "Sea ice and sea level are persisted as annual observed indicator values and extrapolated after the latest shared observation year.",
+      "Wildfire is an educational pressure index derived from observed warming and CO2; it is not an observed burned-area measurement.",
+      "Rows where observed is false are simple trend extensions for exhibit timeline continuity."
+    ]
+  },
+  "series": [
+    {
+      "year": 1980,
+      "temperature": 0.26,
+      "seaIce": 7.67,
+      "wildfire": 42,
+      "emissions": 338.91,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1981,
+      "temperature": 0.32,
+      "seaIce": 7.14,
+      "wildfire": 44,
+      "emissions": 340.11,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1982,
+      "temperature": 0.14,
+      "seaIce": 7.3,
+      "wildfire": 38,
+      "emissions": 340.85,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1983,
+      "temperature": 0.31,
+      "seaIce": 7.39,
+      "wildfire": 44,
+      "emissions": 342.53,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1984,
+      "temperature": 0.16,
+      "seaIce": 6.81,
+      "wildfire": 40,
+      "emissions": 344.07,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1985,
+      "temperature": 0.12,
+      "seaIce": 6.7,
+      "wildfire": 39,
+      "emissions": 345.54,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1986,
+      "temperature": 0.18,
+      "seaIce": 7.41,
+      "wildfire": 41,
+      "emissions": 346.97,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1987,
+      "temperature": 0.32,
+      "seaIce": 7.28,
+      "wildfire": 46,
+      "emissions": 348.68,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1988,
+      "temperature": 0.39,
+      "seaIce": 7.37,
+      "wildfire": 49,
+      "emissions": 351.16,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1989,
+      "temperature": 0.27,
+      "seaIce": 7.01,
+      "wildfire": 45,
+      "emissions": 352.78,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1990,
+      "temperature": 0.45,
+      "seaIce": 6.14,
+      "wildfire": 52,
+      "emissions": 354.05,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1991,
+      "temperature": 0.4,
+      "seaIce": 6.47,
+      "wildfire": 50,
+      "emissions": 355.39,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1992,
+      "temperature": 0.22,
+      "seaIce": 7.47,
+      "wildfire": 44,
+      "emissions": 356.09,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1993,
+      "temperature": 0.23,
+      "seaIce": 6.4,
+      "wildfire": 45,
+      "emissions": 356.84,
+      "seaLevel": 0,
+      "observed": true
+    },
+    {
+      "year": 1994,
+      "temperature": 0.31,
+      "seaIce": 7.14,
+      "wildfire": 48,
+      "emissions": 358.33,
+      "seaLevel": 2.8,
+      "observed": true
+    },
+    {
+      "year": 1995,
+      "temperature": 0.44,
+      "seaIce": 6.08,
+      "wildfire": 53,
+      "emissions": 360.17,
+      "seaLevel": 5,
+      "observed": true
+    },
+    {
+      "year": 1996,
+      "temperature": 0.33,
+      "seaIce": 7.58,
+      "wildfire": 49,
+      "emissions": 361.93,
+      "seaLevel": 8.2,
+      "observed": true
+    },
+    {
+      "year": 1997,
+      "temperature": 0.46,
+      "seaIce": 6.69,
+      "wildfire": 54,
+      "emissions": 363.04,
+      "seaLevel": 11,
+      "observed": true
+    },
+    {
+      "year": 1998,
+      "temperature": 0.61,
+      "seaIce": 6.54,
+      "wildfire": 60,
+      "emissions": 365.7,
+      "seaLevel": 12.8,
+      "observed": true
+    },
+    {
+      "year": 1999,
+      "temperature": 0.38,
+      "seaIce": 6.12,
+      "wildfire": 52,
+      "emissions": 367.8,
+      "seaLevel": 14.7,
+      "observed": true
+    },
+    {
+      "year": 2000,
+      "temperature": 0.39,
+      "seaIce": 6.25,
+      "wildfire": 53,
+      "emissions": 368.97,
+      "seaLevel": 17.4,
+      "observed": true
+    },
+    {
+      "year": 2001,
+      "temperature": 0.53,
+      "seaIce": 6.73,
+      "wildfire": 58,
+      "emissions": 370.56,
+      "seaLevel": 20.1,
+      "observed": true
+    },
+    {
+      "year": 2002,
+      "temperature": 0.63,
+      "seaIce": 5.83,
+      "wildfire": 62,
+      "emissions": 372.58,
+      "seaLevel": 23.3,
+      "observed": true
+    },
+    {
+      "year": 2003,
+      "temperature": 0.61,
+      "seaIce": 6.12,
+      "wildfire": 62,
+      "emissions": 375.15,
+      "seaLevel": 26.9,
+      "observed": true
+    },
+    {
+      "year": 2004,
+      "temperature": 0.53,
+      "seaIce": 5.98,
+      "wildfire": 60,
+      "emissions": 376.95,
+      "seaLevel": 29,
+      "observed": true
+    },
+    {
+      "year": 2005,
+      "temperature": 0.68,
+      "seaIce": 5.5,
+      "wildfire": 65,
+      "emissions": 378.97,
+      "seaLevel": 33,
+      "observed": true
+    },
+    {
+      "year": 2006,
+      "temperature": 0.64,
+      "seaIce": 5.86,
+      "wildfire": 64,
+      "emissions": 381.15,
+      "seaLevel": 36.2,
+      "observed": true
+    },
+    {
+      "year": 2007,
+      "temperature": 0.66,
+      "seaIce": 4.27,
+      "wildfire": 65,
+      "emissions": 382.9,
+      "seaLevel": 39.7,
+      "observed": true
+    },
+    {
+      "year": 2008,
+      "temperature": 0.54,
+      "seaIce": 4.69,
+      "wildfire": 62,
+      "emissions": 385.02,
+      "seaLevel": 43.3,
+      "observed": true
+    },
+    {
+      "year": 2009,
+      "temperature": 0.66,
+      "seaIce": 5.26,
+      "wildfire": 66,
+      "emissions": 386.5,
+      "seaLevel": 46.1,
+      "observed": true
+    },
+    {
+      "year": 2010,
+      "temperature": 0.72,
+      "seaIce": 4.87,
+      "wildfire": 69,
+      "emissions": 388.75,
+      "seaLevel": 49.7,
+      "observed": true
+    },
+    {
+      "year": 2011,
+      "temperature": 0.61,
+      "seaIce": 4.56,
+      "wildfire": 65,
+      "emissions": 390.62,
+      "seaLevel": 51.7,
+      "observed": true
+    },
+    {
+      "year": 2012,
+      "temperature": 0.64,
+      "seaIce": 3.39,
+      "wildfire": 67,
+      "emissions": 392.65,
+      "seaLevel": 56,
+      "observed": true
+    },
+    {
+      "year": 2013,
+      "temperature": 0.68,
+      "seaIce": 5.05,
+      "wildfire": 69,
+      "emissions": 395.4,
+      "seaLevel": 60.1,
+      "observed": true
+    },
+    {
+      "year": 2014,
+      "temperature": 0.75,
+      "seaIce": 5.03,
+      "wildfire": 72,
+      "emissions": 397.34,
+      "seaLevel": 64,
+      "observed": true
+    },
+    {
+      "year": 2015,
+      "temperature": 0.9,
+      "seaIce": 4.43,
+      "wildfire": 77,
+      "emissions": 399.65,
+      "seaLevel": 69.2,
+      "observed": true
+    },
+    {
+      "year": 2016,
+      "temperature": 1.01,
+      "seaIce": 4.17,
+      "wildfire": 82,
+      "emissions": 403.09,
+      "seaLevel": 73.5,
+      "observed": true
+    },
+    {
+      "year": 2017,
+      "temperature": 0.92,
+      "seaIce": 4.67,
+      "wildfire": 79,
+      "emissions": 405.22,
+      "seaLevel": 77.8,
+      "observed": true
+    },
+    {
+      "year": 2018,
+      "temperature": 0.85,
+      "seaIce": 4.66,
+      "wildfire": 77,
+      "emissions": 407.61,
+      "seaLevel": 82.4,
+      "observed": true
+    },
+    {
+      "year": 2019,
+      "temperature": 0.98,
+      "seaIce": 4.19,
+      "wildfire": 82,
+      "emissions": 410.07,
+      "seaLevel": 87.6,
+      "observed": true
+    },
+    {
+      "year": 2020,
+      "temperature": 1.01,
+      "seaIce": 3.82,
+      "wildfire": 84,
+      "emissions": 412.44,
+      "seaLevel": 91.3,
+      "observed": true
+    },
+    {
+      "year": 2021,
+      "temperature": 0.85,
+      "seaIce": 4.72,
+      "wildfire": 79,
+      "emissions": 414.7,
+      "seaLevel": 94.8,
+      "observed": true
+    },
+    {
+      "year": 2022,
+      "temperature": 0.89,
+      "seaIce": 4.67,
+      "wildfire": 81,
+      "emissions": 417.08,
+      "seaLevel": 98.2,
+      "observed": true
+    },
+    {
+      "year": 2023,
+      "temperature": 1.17,
+      "seaIce": 4.23,
+      "wildfire": 91,
+      "emissions": 419.36,
+      "seaLevel": 101,
+      "observed": true
+    },
+    {
+      "year": 2024,
+      "temperature": 1.29,
+      "seaIce": 4.28,
+      "wildfire": 95,
+      "emissions": 422.79,
+      "seaLevel": 106.9,
+      "observed": true
+    },
+    {
+      "year": 2025,
+      "temperature": 1.19,
+      "seaIce": 4.6,
+      "wildfire": 93,
+      "emissions": 425.65,
+      "seaLevel": 111.2,
+      "observed": false
+    },
+    {
+      "year": 2026,
+      "temperature": 1.23,
+      "seaIce": 4.62,
+      "wildfire": 95,
+      "emissions": 428.25,
+      "seaLevel": 115.5,
+      "observed": false
+    },
+    {
+      "year": 2027,
+      "temperature": 1.27,
+      "seaIce": 4.63,
+      "wildfire": 97,
+      "emissions": 430.85,
+      "seaLevel": 119.8,
+      "observed": false
+    },
+    {
+      "year": 2028,
+      "temperature": 1.32,
+      "seaIce": 4.65,
+      "wildfire": 99,
+      "emissions": 433.45,
+      "seaLevel": 124.1,
+      "observed": false
+    },
+    {
+      "year": 2029,
+      "temperature": 1.36,
+      "seaIce": 4.67,
+      "wildfire": 101,
+      "emissions": 436.05,
+      "seaLevel": 128.4,
+      "observed": false
+    },
+    {
+      "year": 2030,
+      "temperature": 1.4,
+      "seaIce": 4.68,
+      "wildfire": 103,
+      "emissions": 438.65,
+      "seaLevel": 132.6,
+      "observed": false
+    },
+    {
+      "year": 2031,
+      "temperature": 1.44,
+      "seaIce": 4.7,
+      "wildfire": 105,
+      "emissions": 441.25,
+      "seaLevel": 136.9,
+      "observed": false
+    },
+    {
+      "year": 2032,
+      "temperature": 1.49,
+      "seaIce": 4.72,
+      "wildfire": 107,
+      "emissions": 443.85,
+      "seaLevel": 141.2,
+      "observed": false
+    },
+    {
+      "year": 2033,
+      "temperature": 1.53,
+      "seaIce": 4.74,
+      "wildfire": 109,
+      "emissions": 446.45,
+      "seaLevel": 145.5,
+      "observed": false
+    },
+    {
+      "year": 2034,
+      "temperature": 1.57,
+      "seaIce": 4.75,
+      "wildfire": 111,
+      "emissions": 449.05,
+      "seaLevel": 149.8,
+      "observed": false
+    }
+  ]
+}

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Pause, SkipForward } from "lucide-react";
+import { latestObservedYear, yearExtent } from "@/data/climateData";
 
 interface TimelineSliderProps {
   year: number;
@@ -11,9 +12,6 @@ interface TimelineSliderProps {
   onJump: (year: number) => void;
   onTogglePlay: () => void;
 }
-
-const minYear = 1980;
-const maxYear = 2035;
 
 export function TimelineSlider({ year, isPlaying, onChange, onJump, onTogglePlay }: TimelineSliderProps) {
   return (
@@ -28,7 +26,7 @@ export function TimelineSlider({ year, isPlaying, onChange, onJump, onTogglePlay
             {isPlaying ? <Pause className="mr-2 h-4 w-4" /> : <Play className="mr-2 h-4 w-4" />}
             {isPlaying ? "Pause" : "Play"}
           </Button>
-          <Button variant="secondary" onClick={() => onJump(maxYear)}>
+          <Button variant="secondary" onClick={() => onJump(latestObservedYear)}>
             <SkipForward className="mr-2 h-4 w-4" /> Jump to latest
           </Button>
         </div>
@@ -36,15 +34,15 @@ export function TimelineSlider({ year, isPlaying, onChange, onJump, onTogglePlay
 
       <div className="space-y-3">
         <div className="flex items-center justify-between text-sm text-white/64">
-          <span>{minYear}</span>
+          <span>{yearExtent.min}</span>
           <span className="font-semibold text-white">{year}</span>
-          <span>{maxYear}</span>
+          <span>{yearExtent.max}</span>
         </div>
         <input
           aria-label="Climate timeline"
           type="range"
-          min={minYear}
-          max={maxYear}
+          min={yearExtent.min}
+          max={yearExtent.max}
           step={1}
           value={year}
           onChange={(event) => onChange(Number(event.target.value))}

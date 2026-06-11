@@ -1,5 +1,5 @@
-import { ExplorerPage } from "@/components/explorer/explorer-page";
+import { ImmersiveExperience } from "@/components/experience/immersive-experience";
 
 export default function ExplorerRoute() {
-  return <ExplorerPage />;
+  return <ImmersiveExperience />;
 }

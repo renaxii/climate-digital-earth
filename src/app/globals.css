@@ -10,25 +10,59 @@
   --text-primary: #e7f3ff;
   --text-secondary: rgba(231, 243, 255, 0.74);
   --text-dim: rgba(231, 243, 255, 0.54);
+  --exhibit-radius-lg: 28px;
+  --exhibit-radius-md: 16px;
+  --exhibit-border: 1px solid rgba(255, 255, 255, 0.14);
+  --exhibit-bg: rgba(7, 24, 39, 0.76);
+  --exhibit-bg-soft: rgba(255, 255, 255, 0.075);
+  --exhibit-shadow: 0 32px 110px rgba(0, 0, 0, 0.38);
 }
 
 html {
-  scroll-behavior:smooth;
+  scroll-behavior: smooth;
+  background: #020814;
+  height: 100vh;
+  overflow: hidden;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   color: var(--text-primary);
   background:
-    radial-gradient(circle at top, rgba(44, 116, 188, 0.45), transparent 28%),
-    radial-gradient(circle at 20% 20%, rgba(41, 192, 176, 0.2), transparent 22%),
-    linear-gradient(180deg, #020813 0%, #061323 45%, #04111e 100%);
+    radial-gradient(circle at 50% 18%, rgba(62, 151, 225, 0.22), transparent 30%),
+    radial-gradient(circle at 74% 20%, rgba(85, 228, 194, 0.1), transparent 22%),
+    linear-gradient(180deg, #020814 0%, #04111f 48%, #020812 100%);
   font-family: var(--font-body), sans-serif;
+}
+
+body > div {
+  height: 100vh;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 * {
   box-sizing: border-box;
+  scrollbar-color: rgba(199, 244, 255, 0.45) rgba(255, 255, 255, 0.06);
+  scrollbar-width: thin;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(199, 244, 255, 0.38);
+  border: 2px solid rgba(7, 24, 39, 0.92);
+  border-radius: 999px;
 }
 
 ::selection {
@@ -49,6 +83,64 @@ body {
   backdrop-filter: blur(24px);
 }
 
+.exhibit-panel {
+  border: var(--exhibit-border);
+  border-radius: var(--exhibit-radius-lg);
+  background: var(--exhibit-bg);
+  box-shadow: var(--exhibit-shadow);
+  backdrop-filter: blur(24px);
+}
+
+.exhibit-panel-nested {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--exhibit-radius-md);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.exhibit-control {
+  border: var(--exhibit-border);
+  border-radius: 999px;
+  background: rgba(7, 24, 39, 0.72);
+  color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px);
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.exhibit-control:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.exhibit-control:active {
+  transform: translateY(1px);
+}
+
+.exhibit-pill {
+  border: var(--exhibit-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.085);
+  color: rgba(255, 255, 255, 0.86);
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+}
+
+.exhibit-pill:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+}
+
+.themed-scrollbar {
+  scrollbar-color: rgba(199, 244, 255, 0.45) transparent;
+  scrollbar-width: thin;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .focus-ring {
   outline: none;
 }
@@ -59,4 +151,8 @@ body {
 
 .safe-viewport {
   min-height: 100svh;
+}
+
+details > summary::-webkit-details-marker {
+  display: none;
 }

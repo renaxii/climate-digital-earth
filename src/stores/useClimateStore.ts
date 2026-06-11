@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { climateLayers, regions, scenarios, stories, yearExtent } from "@/data/climateData";
-import type { ClimateLayerKey, RegionId, ScenarioKey, StoryId } from "@/types/climate";
+import type { ClimateLayerKey, CountryFocusTarget, RegionId, ScenarioKey, StoryId } from "@/types/climate";
 
 type CameraTarget = {
   lat: number;
@@ -15,6 +15,7 @@ interface ClimateState {
   activeStoryId: StoryId | null;
   activeStoryStep: number;
   selectedRegionId: RegionId;
+  focusedCountry: CountryFocusTarget | null;
   selectedScenario: ScenarioKey;
   highContrast: boolean;
   cameraTarget: CameraTarget;
@@ -24,6 +25,7 @@ interface ClimateState {
   advanceYear: () => void;
   goToYear: (year: number) => void;
   setSelectedRegionId: (regionId: RegionId) => void;
+  setFocusedCountry: (country: CountryFocusTarget | null) => void;
   setSelectedScenario: (scenario: ScenarioKey) => void;
   toggleHighContrast: () => void;
   startStory: (storyId: StoryId) => void;
@@ -42,6 +44,7 @@ export const useClimateStore = create<ClimateState>((set, get) => ({
   activeStoryId: null,
   activeStoryStep: 0,
   selectedRegionId: "global",
+  focusedCountry: null,
   selectedScenario: "+2.0°C",
   highContrast: false,
   cameraTarget: initialStory.camera,
@@ -54,7 +57,22 @@ export const useClimateStore = create<ClimateState>((set, get) => ({
     set({ selectedYear: nextYear });
   },
   goToYear: (year) => set({ selectedYear: Math.min(Math.max(year, yearExtent.min), yearExtent.max) }),
-  setSelectedRegionId: (selectedRegionId) => set({ selectedRegionId }),
+  setSelectedRegionId: (selectedRegionId) => {
+    const region = regions.find((entry) => entry.id === selectedRegionId) ?? regions[regions.length - 1];
+    set({
+      selectedRegionId,
+      focusedCountry: null,
+      cameraTarget: { lat: region.lat, lon: region.lon, distance: selectedRegionId === "global" ? 3.2 : 2.45 }
+    });
+  },
+  setFocusedCountry: (focusedCountry) =>
+    set({
+      focusedCountry,
+      activeStoryId: null,
+      cameraTarget: focusedCountry
+        ? { lat: focusedCountry.lat, lon: focusedCountry.lon, distance: 2.25 }
+        : { lat: 0, lon: 0, distance: 3.2 }
+    }),
   setSelectedScenario: (selectedScenario) => set({ selectedScenario }),
   toggleHighContrast: () => set((state) => ({ highContrast: !state.highContrast })),
   startStory: (storyId) => {
@@ -67,6 +85,7 @@ export const useClimateStore = create<ClimateState>((set, get) => ({
       selectedLayer: slide.layer,
       selectedYear: slide.year,
       selectedRegionId: slide.region,
+      focusedCountry: null,
       cameraTarget: slide.camera,
       isPlaying: false
     });
@@ -93,6 +112,7 @@ export const useClimateStore = create<ClimateState>((set, get) => ({
       selectedLayer: slide.layer,
       selectedYear: slide.year,
       selectedRegionId: slide.region,
+      focusedCountry: null,
       cameraTarget: slide.camera
     });
   }

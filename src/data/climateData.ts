@@ -1,19 +1,28 @@
 import generatedDataset from "@/data/generated/climate-series.json";
+import generatedCountries from "@/data/generated/countries.geo.json";
+import generatedCountryFocusTargets from "@/data/generated/country-focus-targets.json";
 import type {
   ClimateLayerDefinition,
   ClimateYearPoint,
+  CountryFocusTarget,
   GeneratedClimateDataset,
+  GeneratedCountryFocusDataset,
+  GeoCountryFeatureCollection,
   RegionDatum,
   ScenarioDefinition,
   StoryDefinition
 } from "@/types/climate";
 
 const climateDataset = generatedDataset as GeneratedClimateDataset;
+const countryDataset = generatedCountries as GeoCountryFeatureCollection;
+const countryFocusDataset = generatedCountryFocusTargets as GeneratedCountryFocusDataset;
 
 export const climateSeries: ClimateYearPoint[] = climateDataset.series;
 export const years = climateSeries.map((entry) => entry.year);
-
 export const climateMetadata = climateDataset.metadata;
+export const latestObservedYear = climateMetadata.latestObservedYear;
+export const countryFeatureCollection = countryDataset;
+export const countryFocusTargets: CountryFocusTarget[] = countryFocusDataset.countries;
 
 export const yearExtent = {
   min: years[0],
@@ -27,14 +36,14 @@ export const climateLayers: ClimateLayerDefinition[] = [
     shortLabel: "Temperature",
     accent: "#67d8ff",
     legend: "NASA GISTEMP annual global temperature anomaly.",
-    explanation: "Shows how much each region has warmed above the historical average."
+    explanation: "Shows how much the planet has warmed above the historical average."
   },
   {
     key: "seaIce",
     label: "Sea Ice Coverage",
     shortLabel: "Sea Ice",
     accent: "#d2f8ff",
-    legend: "Derived Arctic sea-ice index based on the core climate series.",
+    legend: "NOAA/NSIDC Arctic September sea-ice extent in million square kilometers.",
     explanation: "Highlights the shrinking seasonal ice shield around the poles."
   },
   {
@@ -42,15 +51,15 @@ export const climateLayers: ClimateLayerDefinition[] = [
     label: "Wildfire Activity",
     shortLabel: "Wildfire",
     accent: "#ff9f68",
-    legend: "Educational wildfire pressure index derived from warming and CO2 trends.",
+    legend: "Educational wildfire pressure index derived from NASA warming and NOAA CO2 trends.",
     explanation: "Surfaces the rise in fire-prone conditions and larger burn areas."
   },
   {
     key: "emissions",
     label: "CO2 Emissions",
     shortLabel: "Emissions",
-    accent: "#8cffc1",
-    legend: "NOAA annual mean CO2 and climate indicator trend.",
+    accent: "#d979ff",
+    legend: "NOAA Global Monitoring Laboratory annual mean atmospheric CO2.",
     explanation: "Shows the global carbon load driving atmospheric change."
   },
   {
@@ -58,7 +67,7 @@ export const climateLayers: ClimateLayerDefinition[] = [
     label: "Sea Level Rise",
     shortLabel: "Sea Level",
     accent: "#87b8ff",
-    legend: "NOAA global sea-level trend.",
+    legend: "NASA satellite altimetry global mean sea-level trend.",
     explanation: "Represents ocean expansion and melting land ice."
   }
 ];
@@ -119,7 +128,7 @@ export const stories: StoryDefinition[] = [
       {
         id: "arctic-1",
         title: "A reflective beginning",
-        year: years[0],
+        year: years[5] ?? yearExtent.min,
         layer: "seaIce",
         region: "arctic",
         camera: { lat: 76, lon: -42, distance: 2.9 },
@@ -137,7 +146,7 @@ export const stories: StoryDefinition[] = [
       {
         id: "arctic-3",
         title: "A new baseline",
-        year: yearExtent.max,
+        year: latestObservedYear,
         layer: "seaIce",
         region: "arctic",
         camera: { lat: 82, lon: 10, distance: 2.4 },
@@ -154,7 +163,7 @@ export const stories: StoryDefinition[] = [
       {
         id: "warming-1",
         title: "Pre-industrial balance",
-        year: years[0],
+        year: yearExtent.min,
         layer: "emissions",
         region: "global",
         camera: { lat: 0, lon: 0, distance: 3.1 },
@@ -172,7 +181,7 @@ export const stories: StoryDefinition[] = [
       {
         id: "warming-3",
         title: "A hotter baseline",
-        year: yearExtent.max,
+        year: latestObservedYear,
         layer: "temperature",
         region: "global",
         camera: { lat: 22, lon: 28, distance: 2.7 },
@@ -207,7 +216,7 @@ export const stories: StoryDefinition[] = [
       {
         id: "oceans-3",
         title: "Projected futures",
-        year: yearExtent.max,
+        year: latestObservedYear,
         layer: "seaLevel",
         region: "pacific",
         camera: { lat: -8, lon: -155, distance: 2.55 },
