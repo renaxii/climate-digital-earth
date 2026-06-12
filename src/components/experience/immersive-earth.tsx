@@ -2,7 +2,7 @@
 
 import { Canvas, type ThreeEvent, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import type { ElementRef, RefObject } from "react";
 import * as THREE from "three";
 import { countryFeatureCollection } from "@/data/climateData";
@@ -21,6 +21,7 @@ interface ImmersiveEarthProps {
     distance: number;
   };
   focusedCountry: CountryFocusTarget | null;
+  selectableCountries?: CountryFocusTarget[];
   autoRotate: boolean;
   resetSignal: number;
   onFocusCountry: (country: CountryFocusTarget) => void;
@@ -31,11 +32,11 @@ const layerColors: Record<ClimateLayerKey, string> = {
   temperature: "#7fe3ff",
   seaIce: "#effcff",
   wildfire: "#ffb38a",
-  emissions: "#d979ff",
+  emissions: "#ffb36c",
   seaLevel: "#9fc3ff"
 };
 
-export function ImmersiveEarth({ layer, visualMode = layer, overlayIntensity = 1, layerValue = 0, camera, focusedCountry, autoRotate, resetSignal, onFocusCountry, onUserInteraction }: ImmersiveEarthProps) {
+export function ImmersiveEarth({ layer, visualMode = layer, overlayIntensity = 1, layerValue = 0, camera, focusedCountry, selectableCountries = [], autoRotate, resetSignal, onFocusCountry, onUserInteraction }: ImmersiveEarthProps) {
   return (
     <div
       className="pointer-events-auto absolute inset-0"
@@ -51,7 +52,7 @@ export function ImmersiveEarth({ layer, visualMode = layer, overlayIntensity = 1
         }}
       >
         <Suspense fallback={null}>
-          <Scene layer={layer} visualMode={visualMode} overlayIntensity={overlayIntensity} layerValue={layerValue} cameraTarget={camera} focusedCountry={focusedCountry} autoRotate={autoRotate} resetSignal={resetSignal} onFocusCountry={onFocusCountry} onUserInteraction={onUserInteraction} />
+          <Scene layer={layer} visualMode={visualMode} overlayIntensity={overlayIntensity} layerValue={layerValue} cameraTarget={camera} focusedCountry={focusedCountry} selectableCountries={selectableCountries} autoRotate={autoRotate} resetSignal={resetSignal} onFocusCountry={onFocusCountry} onUserInteraction={onUserInteraction} />
         </Suspense>
       </Canvas>
     </div>
@@ -65,20 +66,21 @@ interface SceneProps {
   layerValue: number;
   cameraTarget: ImmersiveEarthProps["camera"];
   focusedCountry: CountryFocusTarget | null;
+  selectableCountries: CountryFocusTarget[];
   autoRotate: boolean;
   resetSignal: number;
   onFocusCountry: (country: CountryFocusTarget) => void;
   onUserInteraction: () => void;
 }
 
-function Scene({ layer, visualMode, overlayIntensity, layerValue, cameraTarget, focusedCountry, autoRotate, resetSignal, onFocusCountry, onUserInteraction }: SceneProps) {
+function Scene({ layer, visualMode, overlayIntensity, layerValue, cameraTarget, focusedCountry, selectableCountries, autoRotate, resetSignal, onFocusCountry, onUserInteraction }: SceneProps) {
   const controls = useRef<ElementRef<typeof OrbitControls>>(null);
   const accent = layerColors[layer];
 
   return (
     <>
       <Stars radius={130} depth={70} count={1800} factor={3.2} saturation={0} fade speed={0.18} />
-      <EarthBody accent={accent} layer={layer} visualMode={visualMode} overlayIntensity={overlayIntensity} layerValue={layerValue} focusedCountry={focusedCountry} autoRotate={autoRotate} onFocusCountry={onFocusCountry} />
+      <EarthBody accent={accent} layer={layer} visualMode={visualMode} overlayIntensity={overlayIntensity} layerValue={layerValue} focusedCountry={focusedCountry} selectableCountries={selectableCountries} autoRotate={autoRotate} onFocusCountry={onFocusCountry} />
       <CameraRig controls={controls} target={cameraTarget} resetSignal={resetSignal} />
       <ambientLight intensity={0.5} />
       <directionalLight position={[4, 2.2, 5]} intensity={3.2} color="#dff8ff" />
@@ -109,6 +111,7 @@ function EarthBody({
   overlayIntensity,
   layerValue,
   focusedCountry,
+  selectableCountries,
   autoRotate,
   onFocusCountry
 }: {
@@ -118,13 +121,15 @@ function EarthBody({
   overlayIntensity: number;
   layerValue: number;
   focusedCountry: CountryFocusTarget | null;
+  selectableCountries: CountryFocusTarget[];
   autoRotate: boolean;
   onFocusCountry: (country: CountryFocusTarget) => void;
 }) {
   const earth = useRef<THREE.Group>(null);
   const clouds = useRef<THREE.Mesh>(null);
   const glow = useMemo(() => new THREE.Color(accent), [accent]);
-  const layerPulse = layer === "wildfire" ? 0.13 : layer === "seaIce" ? 0.16 : 0.11;
+  const layerPulse = layer === "wildfire" ? 0.08 : layer === "seaIce" ? 0.11 : 0.07;
+  const cloudOpacity = visualMode === "seaIce" ? 0.035 : 0.085;
 
   useFrame(({ clock }, delta) => {
     if (earth.current) {
@@ -197,7 +202,7 @@ function EarthBody({
 
       <mesh ref={clouds} scale={1.017}>
         <sphereGeometry args={[1.42, 96, 96]} />
-        <meshBasicMaterial color="#f4fbff" transparent opacity={0.085} depthWrite={false} />
+        <meshBasicMaterial color="#f4fbff" transparent opacity={cloudOpacity} depthWrite={false} />
       </mesh>
 
       <mesh scale={1.04}>
@@ -205,9 +210,16 @@ function EarthBody({
         <meshBasicMaterial color={accent} transparent opacity={layerPulse} depthWrite={false} />
       </mesh>
 
+      {visualMode === "seaIce" ? (
+        <mesh scale={1.046}>
+          <sphereGeometry args={[1.42, 96, 96]} />
+          <meshBasicMaterial color="#021326" transparent opacity={0.18} depthWrite={false} />
+        </mesh>
+      ) : null}
+
       <ClimateVisualLayer visualMode={visualMode} accent={accent} intensity={overlayIntensity} value={layerValue} />
 
-      <CountryOverlay visualMode={visualMode} accent={accent} activeCountryId={focusedCountry?.id ?? null} onFocusCountry={onFocusCountry} />
+      <CountryOverlay visualMode={visualMode} accent={accent} activeCountryId={focusedCountry?.id ?? null} selectableCountries={selectableCountries} onFocusCountry={onFocusCountry} />
 
       {focusedCountry ? <FocusMarker country={focusedCountry} accent={accent} /> : null}
 
@@ -309,10 +321,10 @@ function IceOverlay({ intensity, extent }: { intensity: number; extent: number }
           depthWrite={false}
           uniforms={{
             uIce: { value: new THREE.Color("#f6feff") },
-            uBlue: { value: new THREE.Color("#80edff") },
-            uEdge: { value: new THREE.Color("#25d7ff") },
+            uBlue: { value: new THREE.Color("#4ee8ff") },
+            uEdge: { value: new THREE.Color("#00b7ff") },
             uCurrentThreshold: { value: currentThreshold },
-            uAlpha: { value: Math.min(0.95, 0.72 * intensity) }
+            uAlpha: { value: Math.min(0.98, 0.86 * intensity) }
           }}
           vertexShader={`
             varying vec3 vPosition;
@@ -330,12 +342,14 @@ function IceOverlay({ intensity, extent }: { intensity: number; extent: number }
             varying vec3 vPosition;
             void main() {
               float latitude = abs(vPosition.y);
-              float historical = smoothstep(0.52, 0.68, latitude) * 0.26;
+              float historical = smoothstep(0.5, 0.66, latitude) * 0.34;
               float current = smoothstep(uCurrentThreshold, 0.93, latitude) * uAlpha;
-              float edgeBand = smoothstep(uCurrentThreshold - 0.025, uCurrentThreshold, latitude) - smoothstep(uCurrentThreshold, uCurrentThreshold + 0.035, latitude);
-              vec3 color = mix(uBlue, uIce, smoothstep(0.68, 0.95, latitude));
-              color = mix(color, uEdge, edgeBand * 0.55);
-              gl_FragColor = vec4(color, min(0.98, historical + current + edgeBand * 0.36));
+              float edgeBand = smoothstep(uCurrentThreshold - 0.035, uCurrentThreshold, latitude) - smoothstep(uCurrentThreshold, uCurrentThreshold + 0.055, latitude);
+              float capCore = smoothstep(0.78, 0.98, latitude);
+              vec3 color = mix(uBlue, uIce, smoothstep(0.72, 0.96, latitude));
+              color = mix(color, uEdge, edgeBand * 0.75);
+              color += uEdge * edgeBand * 0.35;
+              gl_FragColor = vec4(color, min(0.99, historical + current + edgeBand * 0.62 + capCore * 0.08));
             }
           `}
         />
@@ -355,8 +369,9 @@ function IceOverlay({ intensity, extent }: { intensity: number; extent: number }
           fragmentShader={`
             varying vec3 vPosition;
             void main() {
-              float polarGlow = smoothstep(0.62, 0.9, abs(vPosition.y));
-              gl_FragColor = vec4(0.65, 0.96, 1.0, polarGlow * 0.18);
+              float polarGlow = smoothstep(0.56, 0.9, abs(vPosition.y));
+              float rim = smoothstep(0.68, 0.78, abs(vPosition.y)) - smoothstep(0.86, 0.98, abs(vPosition.y));
+              gl_FragColor = vec4(0.34, 0.9, 1.0, polarGlow * 0.28 + rim * 0.16);
             }
           `}
         />
@@ -407,11 +422,11 @@ function HotspotMarkers({ accent, kind, intensity }: { accent: string; kind: "wi
         <group key={`${kind}-${spot.lat}-${spot.lon}`} position={latLonToPosition(spot.lat, spot.lon, 1.49)}>
           <mesh>
             <sphereGeometry args={[spot.size * intensity, 18, 18]} />
-            <meshBasicMaterial color={kind === "wildfire" ? "#ff7a30" : "#d979ff"} transparent opacity={0.9} />
+            <meshBasicMaterial color={kind === "wildfire" ? "#ff7a30" : "#ff8a34"} transparent opacity={0.9} />
           </mesh>
           <mesh scale={2.2}>
             <sphereGeometry args={[spot.size * intensity, 18, 18]} />
-            <meshBasicMaterial color={kind === "wildfire" ? "#ffb36c" : "#ff6bd6"} transparent opacity={kind === "wildfire" ? 0.22 : 0.22} depthWrite={false} />
+            <meshBasicMaterial color={kind === "wildfire" ? "#ffb36c" : "#ffcf7a"} transparent opacity={kind === "wildfire" ? 0.22 : 0.22} depthWrite={false} />
           </mesh>
         </group>
       ))}
@@ -419,15 +434,94 @@ function HotspotMarkers({ accent, kind, intensity }: { accent: string; kind: "wi
   );
 }
 
-function CountryOverlay({ visualMode, accent, activeCountryId, onFocusCountry }: { visualMode: ClimateLayerKey | "overview"; accent: string; activeCountryId: string | null; onFocusCountry: (country: CountryFocusTarget) => void }) {
+function CountryOverlay({
+  visualMode,
+  accent,
+  activeCountryId,
+  selectableCountries,
+  onFocusCountry
+}: {
+  visualMode: ClimateLayerKey | "overview";
+  accent: string;
+  activeCountryId: string | null;
+  selectableCountries: CountryFocusTarget[];
+  onFocusCountry: (country: CountryFocusTarget) => void;
+}) {
+  const [hoveredCountryId, setHoveredCountryId] = useState<string | null>(null);
   const lineColor = visualMode === "seaLevel" ? "#98e7ff" : accent;
-  const baseOpacity = visualMode === "seaLevel" ? 0.48 : visualMode === "overview" ? 0.12 : 0.18;
+  const baseOpacity = visualMode === "seaLevel" ? 0.32 : visualMode === "overview" ? 0.07 : 0.11;
 
   return (
     <group>
       {countryFeatureCollection.features.map((country) => (
-        <CountryLines key={country.id} country={country} active={country.id === activeCountryId} accent={lineColor} baseOpacity={baseOpacity} onFocusCountry={onFocusCountry} />
+        <CountryLines key={country.id} country={country} active={country.id === activeCountryId || country.id === hoveredCountryId} accent={lineColor} baseOpacity={baseOpacity} onFocusCountry={onFocusCountry} />
       ))}
+      {selectableCountries.map((country) => (
+        <RegionHitTarget
+          key={`hit-${country.id}`}
+          country={country}
+          active={country.id === activeCountryId}
+          accent={lineColor}
+          onFocusCountry={onFocusCountry}
+          onHover={(id) => {
+            setHoveredCountryId(id);
+          }}
+        />
+      ))}
+    </group>
+  );
+}
+
+function RegionHitTarget({
+  country,
+  active,
+  accent,
+  onFocusCountry,
+  onHover
+}: {
+  country: CountryFocusTarget;
+  active: boolean;
+  accent: string;
+  onFocusCountry: (country: CountryFocusTarget) => void;
+  onHover: (id: string | null) => void;
+}) {
+  const group = useRef<THREE.Group>(null);
+  const position = useMemo(() => latLonToPosition(country.lat, country.lon, 1.505), [country.lat, country.lon]);
+
+  useFrame(({ clock }) => {
+    if (group.current && active) {
+      group.current.scale.setScalar(1 + Math.sin(clock.elapsedTime * 2.1) * 0.055);
+    }
+  });
+
+  return (
+    <group
+      ref={group}
+      position={position}
+      onPointerOver={(event) => {
+        event.stopPropagation();
+        onHover(country.id);
+        document.body.style.cursor = "pointer";
+      }}
+      onPointerOut={(event) => {
+        event.stopPropagation();
+        onHover(null);
+        document.body.style.cursor = "";
+      }}
+      onClick={(event) => {
+        event.stopPropagation();
+        document.body.style.cursor = "";
+        onFocusCountry(country);
+      }}
+    >
+      <mesh>
+        <sphereGeometry args={[active ? 0.04 : 0.026, 18, 18]} />
+        <meshBasicMaterial color={accent} transparent opacity={active ? 0.88 : 0.24} depthWrite={false} />
+      </mesh>
+      <mesh scale={2.8}>
+        <sphereGeometry args={[active ? 0.036 : 0.024, 18, 18]} />
+        <meshBasicMaterial color={accent} transparent opacity={active ? 0.2 : 0.07} depthWrite={false} />
+      </mesh>
     </group>
   );
 }

@@ -32,43 +32,35 @@ export const yearExtent = {
 export const climateLayers: ClimateLayerDefinition[] = [
   {
     key: "temperature",
-    label: "Temperature Anomalies",
-    shortLabel: "Temperature",
+    label: "Warming",
+    shortLabel: "Warming",
     accent: "#67d8ff",
     legend: "NASA GISTEMP annual global temperature anomaly.",
-    explanation: "Shows how much the planet has warmed above the historical average."
+    explanation: "Shows how global temperatures differ from a historical baseline."
   },
   {
     key: "seaIce",
-    label: "Sea Ice Coverage",
-    shortLabel: "Sea Ice",
+    label: "Ice Loss",
+    shortLabel: "Ice Loss",
     accent: "#d2f8ff",
     legend: "NOAA/NSIDC Arctic September sea-ice extent in million square kilometers.",
-    explanation: "Highlights the shrinking seasonal ice shield around the poles."
-  },
-  {
-    key: "wildfire",
-    label: "Wildfire Activity",
-    shortLabel: "Wildfire",
-    accent: "#ff9f68",
-    legend: "Educational wildfire pressure index derived from NASA warming and NOAA CO2 trends.",
-    explanation: "Surfaces the rise in fire-prone conditions and larger burn areas."
-  },
-  {
-    key: "emissions",
-    label: "CO2 Emissions",
-    shortLabel: "Emissions",
-    accent: "#d979ff",
-    legend: "NOAA Global Monitoring Laboratory annual mean atmospheric CO2.",
-    explanation: "Shows the global carbon load driving atmospheric change."
+    explanation: "Shows shrinking polar ice coverage, especially in the Arctic and Antarctic."
   },
   {
     key: "seaLevel",
-    label: "Sea Level Rise",
-    shortLabel: "Sea Level",
+    label: "Rising Seas",
+    shortLabel: "Rising Seas",
     accent: "#87b8ff",
     legend: "NASA satellite altimetry global mean sea-level trend.",
-    explanation: "Represents ocean expansion and melting land ice."
+    explanation: "Shows coastal risk from ocean expansion and melting land ice."
+  },
+  {
+    key: "wildfire",
+    label: "Wildfires",
+    shortLabel: "Wildfires",
+    accent: "#ff9f68",
+    legend: "Educational wildfire pressure index derived from NASA warming and NOAA CO2 trends.",
+    explanation: "Shows regions where heat and dryness increase fire risk."
   }
 ];
 
@@ -108,7 +100,7 @@ export const regions: RegionDatum[] = [
   buildRegion("amazon", "Amazon Basin", -4, -63, "Carbon and fire hotspot", "Hotter, drier conditions are increasing fire risk and stressing a globally important carbon sink.", 1.4),
   buildRegion("pacific", "Pacific Islands", -16, -170, "Coastal resilience under pressure", "Sea level rise magnifies storm surge, erosion, and freshwater intrusion across low-lying islands.", 1.8),
   buildRegion("europe", "Europe", 52, 14, "Heatwaves and adaptation", "Recent summers show how rising heat extremes affect health, water, agriculture, and energy demand.", 1.2),
-  buildRegion("global", "Global View", 0, 0, "Planetary baseline", "The global view combines temperature, emissions, ice, and sea-level signals into one narrative.", 1)
+  buildRegion("global", "Global View", 0, 0, "Planetary baseline", "The global view combines warming, ice loss, rising seas, and wildfire risk into one narrative.", 1)
 ];
 
 export const scenarios: ScenarioDefinition[] = [
@@ -156,18 +148,18 @@ export const stories: StoryDefinition[] = [
   },
   {
     id: "warming",
-    title: "The Warming Planet",
-    subtitle: "Trace the rise of temperature and emissions together.",
+    title: "Warming",
+    subtitle: "Trace how global temperatures differ from a historical baseline.",
     color: "#8cffc1",
     slides: [
       {
         id: "warming-1",
         title: "Pre-industrial balance",
         year: yearExtent.min,
-        layer: "emissions",
+        layer: "temperature",
         region: "global",
         camera: { lat: 0, lon: 0, distance: 3.1 },
-        narrative: "Industrial emissions are already shaping the atmosphere, but the strongest warming signal is still ahead."
+        narrative: "The warming signal begins as a small shift from the historical baseline, then compounds across the system."
       },
       {
         id: "warming-2",
@@ -176,7 +168,7 @@ export const stories: StoryDefinition[] = [
         layer: "temperature",
         region: "global",
         camera: { lat: 14, lon: 18, distance: 2.95 },
-        narrative: "As emissions rise, the temperature curve turns upward and climate extremes become more frequent."
+        narrative: "As the temperature curve turns upward, climate extremes become more frequent."
       },
       {
         id: "warming-3",
