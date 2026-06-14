@@ -48,8 +48,8 @@ export const climateLayers: ClimateLayerDefinition[] = [
   },
   {
     key: "seaLevel",
-    label: "Rising Seas",
-    shortLabel: "Rising Seas",
+    label: "Seas",
+    shortLabel: "Seas",
     accent: "#87b8ff",
     legend: "NASA satellite altimetry global mean sea-level trend.",
     explanation: "Shows coastal risk from ocean expansion and melting land ice."
@@ -59,7 +59,7 @@ export const climateLayers: ClimateLayerDefinition[] = [
     label: "Wildfires",
     shortLabel: "Wildfires",
     accent: "#ff9f68",
-    legend: "Educational wildfire pressure index derived from NASA warming and NOAA CO2 trends.",
+    legend: "Educational wildfire pressure index derived from NASA warming and carbon trends.",
     explanation: "Shows regions where heat and dryness increase fire risk."
   }
 ];
@@ -212,7 +212,7 @@ export const stories: StoryDefinition[] = [
         layer: "seaLevel",
         region: "pacific",
         camera: { lat: -8, lon: -155, distance: 2.55 },
-        narrative: "Future sea-level rise is a long-lived risk that demands adaptation choices today."
+        narrative: "Long-term sea rise is a persistent risk that demands adaptation choices today."
       }
     ]
   }

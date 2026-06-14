@@ -255,7 +255,7 @@ function ClimateVisualLayer({ visualMode, accent, intensity, value }: { visualMo
 
   return (
     <>
-      {visualMode === "temperature" ? <TemperatureOverlay intensity={intensity} anomaly={value} /> : null}
+      {visualMode === "temperature" ? <WarmingOverlay intensity={intensity} anomaly={value} /> : null}
       {visualMode === "seaIce" ? <IceOverlay intensity={intensity} extent={value} /> : null}
       {visualMode === "wildfire" ? <HotspotMarkers accent={accent} kind="wildfire" intensity={intensity} /> : null}
       {visualMode === "emissions" ? <HotspotMarkers accent={accent} kind="emissions" intensity={intensity} /> : null}
@@ -264,7 +264,7 @@ function ClimateVisualLayer({ visualMode, accent, intensity, value }: { visualMo
   );
 }
 
-function TemperatureOverlay({ intensity, anomaly }: { intensity: number; anomaly: number }) {
+function WarmingOverlay({ intensity, anomaly }: { intensity: number; anomaly: number }) {
   const normalized = Math.max(0, Math.min(1, (anomaly + 0.3) / 1.8));
   const warmAlpha = Math.min(0.42, (0.12 + normalized * 0.22) * intensity);
 

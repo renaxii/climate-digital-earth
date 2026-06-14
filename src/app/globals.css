@@ -127,6 +127,14 @@ body > div {
   color: #ffffff;
 }
 
+.nav-item,
+.tab-button {
+  white-space: nowrap;
+  min-width: max-content;
+  overflow: visible;
+  text-overflow: clip;
+}
+
 .themed-scrollbar {
   scrollbar-color: rgba(199, 244, 255, 0.45) transparent;
   scrollbar-width: thin;

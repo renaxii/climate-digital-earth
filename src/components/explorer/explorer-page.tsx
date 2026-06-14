@@ -157,7 +157,7 @@ export function ExplorerPage() {
             </Card>
 
             <Card className="space-y-4">
-              <SectionHeading eyebrow="Scenarios" title="Future simulator" description="These projections are clearly labeled and are meant to compare potential futures, not predictions." />
+              <SectionHeading eyebrow="Scenarios" title="Scenario simulator" description="These projections are clearly labeled and are meant to compare potential paths, not predictions." />
               <div className="grid grid-cols-2 gap-2">
                 {scenarios.map((scenario) => (
                   <button

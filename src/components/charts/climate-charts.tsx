@@ -35,7 +35,7 @@ export function ClimateCharts({ selectedLayer, selectedYear, selectedRegionId }:
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <ChartCard title="Temperature trend" subtitle={`${region.name} · ${current.temperature.toFixed(2)}°C anomaly`}>
+        <ChartCard title="Warming trend" subtitle={`${region.name} · ${current.temperature.toFixed(2)}°C anomaly`}>
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={temperatureData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.08)" strokeDasharray="4 8" />
@@ -65,7 +65,7 @@ export function ClimateCharts({ selectedLayer, selectedYear, selectedRegionId }:
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Emissions trend" subtitle="CO2 remains the long-term driver of warming.">
+        <ChartCard title="Carbon trend" subtitle="Carbon remains the long-term driver of warming.">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={emissionsData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.08)" strokeDasharray="4 8" />
@@ -77,7 +77,7 @@ export function ClimateCharts({ selectedLayer, selectedYear, selectedRegionId }:
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Sea level trend" subtitle="Long-lived ocean response is especially important for coastal cities.">
+        <ChartCard title="Seas trend" subtitle="Long-lived ocean response is especially important for coastal cities.">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={seaLevelData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <CartesianGrid stroke="rgba(255,255,255,0.08)" strokeDasharray="4 8" />

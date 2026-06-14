@@ -1,11 +1,11 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight, CircleDot, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 import dynamic from "next/dynamic";
 import { type CSSProperties, type ReactNode, useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { climateLayers, climateSeries, countryFocusTargets, latestObservedYear } from "@/data/climateData";
+import { climateSeries, countryFocusTargets, latestObservedYear } from "@/data/climateData";
 import type { ClimateLayerKey, CountryFocusTarget } from "@/types/climate";
 
 const ImmersiveEarth = dynamic(() => import("@/components/experience/immersive-earth").then((module) => module.ImmersiveEarth), {
@@ -16,7 +16,7 @@ const ImmersiveEarth = dynamic(() => import("@/components/experience/immersive-e
 type StorySlide = {
   id: string;
   label: string;
-  layer: ClimateLayerKey;
+  layer: ClimateLayerKey | "overview";
   year: number;
   camera: {
     lat: number;
@@ -25,6 +25,8 @@ type StorySlide = {
   };
 };
 
+type ClimateTabKey = ClimateLayerKey | "overview";
+
 const glossary = {
   "temperature anomaly": "How much warmer or cooler a year is compared with a long-term average.",
   "sea ice extent": "The ocean area with enough floating ice to count as ice-covered.",
@@ -32,7 +34,7 @@ const glossary = {
   ppm: "Parts per million: a way to count tiny amounts of gas in the atmosphere.",
   "sea level rise": "The long-term increase in ocean height along coasts and globally.",
   albedo: "How much sunlight a surface reflects. Bright ice reflects more than dark ocean.",
-  "climate scenario": "A possible future path based on choices, emissions, and warming.",
+  "climate scenario": "A possible climate path based on choices, emissions, and warming.",
   projection: "A model-based estimate of what could happen under certain assumptions.",
   "warming threshold": "A temperature level where climate risks become more likely or severe.",
   "fire weather": "Hot, dry, windy conditions that can make fires easier to start and spread."
@@ -41,7 +43,7 @@ const glossary = {
 type GlossaryKey = keyof typeof glossary;
 
 type LayerState = {
-  id: ClimateLayerKey;
+  id: ClimateTabKey;
   label: string;
   title: string;
   description: ReactNode;
@@ -51,7 +53,7 @@ type LayerState = {
   legend: string;
   colorScale: Array<{ color: string; label: string }>;
   overlayConfig: {
-    mode: ClimateLayerKey;
+    mode: ClimateLayerKey | "overview";
     value: number;
     intensity: number;
   };
@@ -62,7 +64,7 @@ const slides: StorySlide[] = [
   {
     id: "overview",
     label: "Overview",
-    layer: "temperature",
+    layer: "overview",
     year: latestObservedYear,
     camera: { lat: 12, lon: -34, distance: 3.25 }
   },
@@ -82,7 +84,7 @@ const slides: StorySlide[] = [
   },
   {
     id: "seas",
-    label: "Rising Seas",
+    label: "Seas",
     layer: "seaLevel",
     year: latestObservedYear,
     camera: { lat: -16, lon: -165, distance: 2.65 }
@@ -93,6 +95,13 @@ const slides: StorySlide[] = [
     layer: "wildfire",
     year: latestObservedYear,
     camera: { lat: -7, lon: -58, distance: 2.7 }
+  },
+  {
+    id: "carbon",
+    label: "Carbon",
+    layer: "emissions",
+    year: latestObservedYear,
+    camera: { lat: 31, lon: 88, distance: 2.7 }
   }
 ];
 
@@ -106,7 +115,6 @@ const pillButtonClass = "focus-ring exhibit-pill px-4 py-2 text-sm";
 export function ImmersiveExperience() {
   const reduceMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [activeLayer, setActiveLayer] = useState<ClimateLayerKey>(slides[0].layer);
   const [focusedCountry, setFocusedCountry] = useState<CountryFocusTarget | null>(null);
   const [isGlobeUserPaused, setIsGlobeUserPaused] = useState(false);
   const [resetSignal, setResetSignal] = useState(0);
@@ -120,19 +128,17 @@ export function ImmersiveExperience() {
     []
   );
   const activeSlide = slides[activeIndex] ?? slides[0];
-  const activeLayerState = getLayerState(activeLayer, activeSlide.year);
-  const progress = (activeIndex + 1) / slides.length;
+  const activeLayerState = getLayerState(activeSlide.layer, activeSlide.year);
   const camera = focusedCountry ? { lat: focusedCountry.lat, lon: focusedCountry.lon, distance: 2.18 } : activeSlide.camera;
   const visualMode: ClimateLayerKey | "overview" = activeLayerState.overlayConfig.mode;
   const overlayIntensity = activeLayerState.overlayConfig.intensity;
   const layerValue = activeLayerState.overlayConfig.value;
   const isGlobeAutoRotating = !isGlobeUserPaused && !focusedCountry;
+  const globeLayer: ClimateLayerKey = activeSlide.layer === "overview" ? "temperature" : activeSlide.layer;
 
   const goToSlide = useCallback((index: number) => {
     const nextIndex = (index + slides.length) % slides.length;
-    const nextSlide = slides[nextIndex] ?? slides[0];
     setActiveIndex(nextIndex);
-    setActiveLayer(nextSlide.layer);
     setFocusedCountry(null);
   }, []);
 
@@ -198,7 +204,7 @@ export function ImmersiveExperience() {
 
       <section className="absolute inset-0 z-0 md:left-[30vw]">
         <ImmersiveEarth
-          layer={activeLayer}
+          layer={globeLayer}
           visualMode={visualMode}
           overlayIntensity={overlayIntensity}
           layerValue={layerValue}
@@ -215,35 +221,35 @@ export function ImmersiveExperience() {
         />
       </section>
 
-      <div className="relative z-10 grid h-full gap-[clamp(0.85rem,1.5vw,1.35rem)] p-[clamp(1rem,2vw,2rem)] [grid-template-rows:auto_minmax(0,1fr)_auto] lg:[grid-template-columns:clamp(24rem,31vw,34rem)_minmax(0,1fr)_clamp(14rem,16vw,17rem)]">
+      <div className="relative z-10 grid h-full gap-[clamp(0.85rem,1.5vw,1.35rem)] p-[clamp(1rem,2vw,2rem)] [grid-template-rows:auto_minmax(0,1fr)] lg:[grid-template-columns:clamp(25rem,32vw,35rem)_minmax(0,1fr)_clamp(12rem,14vw,16rem)]">
         <AnimatePresence mode="wait">
           <motion.article
             key={activeSlide.id}
-            initial={reduceMotion ? false : { opacity: 0, x: -20, filter: "blur(8px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 18, filter: "blur(8px)" }}
+            initial={reduceMotion ? false : { opacity: 0, x: -18 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 16 }}
             transition={{ duration: 0.46, ease: [0.22, 1, 0.36, 1] }}
-            className={`${panelClass} z-10 row-start-2 max-h-[calc(100vh-12rem)] overflow-visible p-[clamp(1.35rem,2vw,1.9rem)] lg:col-start-1 lg:row-start-1 lg:row-end-3 lg:max-h-[calc(100vh-8.5rem)] lg:max-w-[34rem]`}
+            className={`${panelClass} themed-scrollbar z-10 row-start-2 max-h-[calc(100vh-12rem)] overflow-y-auto overflow-x-visible p-[clamp(1.35rem,2vw,1.9rem)] lg:col-start-1 lg:row-start-1 lg:row-end-3 lg:max-h-[calc(100vh-8.5rem)] lg:max-w-[35rem]`}
           >
             <div className="flex items-center justify-between gap-4">
-              <p className="min-w-0 break-words text-xs uppercase tracking-[0.18em] text-white/58">{activeSlide.label}</p>
+              <p className="min-w-0 whitespace-nowrap text-xs uppercase tracking-[0.18em] text-white/58">{activeSlide.label}</p>
               <p className="font-mono text-xs text-white/58">{activeSlide.year}</p>
             </div>
 
-            <h1 className="mt-5 break-words py-1 font-display text-[clamp(1.9rem,3.2vw,2.85rem)] leading-[1.18] text-white">{activeLayerState.title}</h1>
-            <p className="mt-4 max-w-[30rem] break-words text-[0.92rem] leading-7 text-white/74">{activeLayerState.description}</p>
+            <h1 className="mt-5 break-normal py-1 font-display text-[clamp(1.9rem,3.2vw,2.85rem)] leading-[1.18] text-white">{activeLayerState.title}</h1>
+            <p className="mt-4 max-w-[30rem] break-normal text-[0.92rem] leading-7 text-white/74">{activeLayerState.description}</p>
 
             <div className="mt-7 border-t border-white/10 pt-5">
               <div className="min-w-0">
-                <p className="break-words font-display text-[clamp(2rem,3.6vw,2.85rem)] leading-none text-white">{activeLayerState.stat}</p>
-                <p className="mt-2 break-words text-xs uppercase leading-5 tracking-[0.16em] text-white/58">{activeLayerState.statLabel}</p>
+                <p className="break-normal font-display text-[clamp(2rem,3.6vw,2.85rem)] leading-none text-white">{activeLayerState.stat}</p>
+                <p className="mt-2 break-normal text-xs uppercase leading-5 tracking-[0.16em] text-white/58">{activeLayerState.statLabel}</p>
               </div>
             </div>
 
             <CompactLegend layerState={activeLayerState} />
 
             <p className="mt-5 border-t border-white/10 pt-4 text-xs leading-5 text-white/58">
-              Climate changes are connected, but each layer shows a different part of the system: warming is the overall trend, ice loss is one visible result, rising seas affect coastlines, and wildfires show land impacts.
+              Climate changes are connected, but each layer shows a different part of the system: warming is the overall trend, ice loss is one visible result, rising seas affect coastlines, wildfires show land impacts, and carbon shows the atmospheric driver.
             </p>
 
             {activeLayerState.tooltipTerms.length ? (
@@ -278,18 +284,18 @@ export function ImmersiveExperience() {
         </AnimatePresence>
 
         <header className="z-20 row-start-1 flex min-w-0 items-start justify-end gap-3 lg:col-start-2 lg:col-end-4">
-          <div className="min-w-0">
-            <div className="no-scrollbar exhibit-control flex max-w-[calc(100vw-2rem)] overflow-x-auto p-1 lg:max-w-none" aria-label="Climate layer selector">
-              {climateLayers.map((layer) => (
+          <div className="min-w-0 max-w-full">
+            <div className="no-scrollbar exhibit-control flex max-w-full overflow-x-auto p-1 lg:max-w-none" aria-label="Climate section selector">
+              {slides.map((slide, index) => (
                 <button
-                  key={layer.key}
-                  aria-label={`Show ${layer.label} layer`}
+                  key={slide.id}
+                  aria-label={`Show ${slide.label}`}
                   onClick={() => {
-                    setActiveLayer(layer.key);
+                    goToSlide(index);
                   }}
-                  className={`focus-ring shrink-0 rounded-full px-3 py-2 text-xs transition ${activeLayer === layer.key ? "bg-white/92 text-slate-950" : "text-white/70 hover:bg-white/10 hover:text-white"}`}
+                  className={`tab-button nav-item focus-ring shrink-0 rounded-full px-4 py-2 text-[0.7rem] leading-none transition ${index === activeIndex ? "bg-white/92 text-slate-950" : "text-white/70 hover:bg-white/10 hover:text-white"}`}
                 >
-                  {layer.shortLabel}
+                  {slide.label}
                 </button>
               ))}
             </div>
@@ -313,45 +319,6 @@ export function ImmersiveExperience() {
         <aside className="z-10 row-start-2 hidden min-h-0 flex-col gap-4 self-end lg:col-start-3 lg:flex">
           {focusedCountry ? <RegionDetailCard country={focusedCountry} layerState={activeLayerState} /> : null}
         </aside>
-
-        <nav className="z-20 row-start-3 lg:col-start-1 lg:col-end-4">
-          <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 rounded-full border border-white/10 bg-[#04111f]/70 px-3 py-2 shadow-[0_18px_45px_rgba(0,0,0,0.22)] backdrop-blur-md">
-          <button
-            onClick={goPrevious}
-            className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.07] text-white/76 transition hover:bg-white/12 hover:text-white"
-            aria-label="Previous section"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </button>
-
-          <div className="flex min-w-0 flex-1 flex-col items-center gap-3">
-            <div className="h-px w-full max-w-[560px] bg-white/10">
-              <motion.div className="h-px bg-cyan-100/80" animate={{ width: `${progress * 100}%` }} transition={{ duration: 0.45, ease: "easeOut" }} />
-            </div>
-            <div className="flex max-w-full items-center justify-center gap-2 overflow-hidden">
-              {slides.map((slide, index) => (
-                <button
-                  key={slide.id}
-                  onClick={() => goToSlide(index)}
-                  className={`focus-ring flex items-center gap-2 whitespace-nowrap rounded-full px-2.5 py-1.5 text-xs transition sm:px-3 ${index === activeIndex ? "bg-white/92 text-slate-950" : "text-white/58 hover:bg-white/10 hover:text-white"}`}
-                  aria-label={`Go to ${slide.label}`}
-                >
-                  <CircleDot className="h-3 w-3 shrink-0" />
-                  <span className="hidden sm:inline">{getShortSlideLabel(slide.label)}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <button
-            onClick={goNext}
-            className="focus-ring inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/92 text-slate-950 transition hover:bg-cyan-50"
-            aria-label="Next section"
-          >
-            <ArrowRight className="h-4 w-4" />
-          </button>
-          </div>
-        </nav>
       </div>
     </main>
   );
@@ -360,12 +327,12 @@ export function ImmersiveExperience() {
 function CompactLegend({ layerState }: { layerState: LayerState }) {
   return (
     <div className="mt-5 border-t border-white/10 pt-4">
-      <p className="mb-3 break-words text-xs leading-5 text-white/58">{layerState.legend}</p>
+      <p className="mb-3 break-normal text-xs leading-5 text-white/58">{layerState.legend}</p>
       <div className="space-y-2">
         {layerState.colorScale.map((item) => (
           <div key={item.label} className="flex items-center gap-3">
             <span className="h-2 w-7 shrink-0 rounded-full" style={{ background: item.color }} />
-            <span className="min-w-0 break-words text-[0.66rem] uppercase leading-4 tracking-[0.1em] text-white/62">{item.label}</span>
+            <span className="min-w-0 break-normal text-[0.66rem] uppercase leading-4 tracking-[0.1em] text-white/62">{item.label}</span>
           </div>
         ))}
       </div>
@@ -381,20 +348,20 @@ function RegionDetailCard({ country, layerState, className = "" }: { country: Co
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[0.65rem] uppercase tracking-[0.22em] text-cyan-50/66">Selected region</p>
-          <h2 className="mt-2 break-words font-display text-2xl leading-tight text-white">{country.name}</h2>
+          <h2 className="mt-2 break-normal font-display text-2xl leading-tight text-white">{country.name}</h2>
         </div>
-        <span className={`${nestedPanelClass} shrink-0 px-3 py-1.5 text-xs text-white/76`}>{layerState.label}</span>
+        <span className={`${nestedPanelClass} shrink-0 whitespace-nowrap px-3 py-1.5 text-xs text-white/76`}>{layerState.label}</span>
       </div>
 
       <div className="mt-5 border-t border-white/10 pt-4">
-        <p className="break-words font-display text-3xl leading-none text-white">{layerState.stat}</p>
-        <p className="mt-2 break-words text-xs uppercase leading-5 tracking-[0.16em] text-white/62">{layerState.statLabel}</p>
+        <p className="break-normal font-display text-3xl leading-none text-white">{layerState.stat}</p>
+        <p className="mt-2 break-normal text-xs uppercase leading-5 tracking-[0.16em] text-white/62">{layerState.statLabel}</p>
       </div>
 
-      <p className="mt-4 break-words text-sm leading-6 text-white/76">{getRegionExplanation(country, layerState)}</p>
+      <p className="mt-4 break-normal text-sm leading-6 text-white/76">{getRegionExplanation(country, layerState)}</p>
 
       <div className={`${nestedPanelClass} mt-4 flex items-center justify-between gap-4 px-3 py-2`}>
-        <span className="text-xs uppercase tracking-[0.16em] text-white/58">Mini trend</span>
+        <span className="shrink-0 whitespace-nowrap text-xs uppercase tracking-[0.16em] text-white/58">Mini trend</span>
         <span className="font-mono text-sm text-cyan-50">{trendTone}</span>
       </div>
     </section>
@@ -497,10 +464,26 @@ function GlossaryTerm({ term }: { term: GlossaryKey }) {
   );
 }
 
-function getLayerState(layer: ClimateLayerKey, year: number): LayerState {
+function getLayerState(layer: ClimateTabKey, year: number): LayerState {
   const point = getPoint(year);
 
-  const states: Record<ClimateLayerKey, LayerState> = {
+  const states: Record<ClimateTabKey, LayerState> = {
+    overview: {
+      id: "overview",
+      label: "Overview",
+      title: "Earth, seen as one connected system.",
+      description: "A general view of the planet before focusing on individual climate signals. Use the tabs above to compare warming, ice, seas, wildfires, and carbon.",
+      year,
+      stat: `${year}`,
+      statLabel: "Latest observed climate view",
+      legend: "The overview keeps the globe natural, with no active data overlay. Colored layers appear when you choose a climate concept.",
+      colorScale: [
+        { color: "#0d3f68", label: "Ocean" },
+        { color: "#f4fbff", label: "Clouds and polar ice" }
+      ],
+      overlayConfig: { mode: "overview", value: 0, intensity: 0 },
+      tooltipTerms: []
+    },
     temperature: {
       id: "temperature",
       label: "Warming",
@@ -572,7 +555,7 @@ function getLayerState(layer: ClimateLayerKey, year: number): LayerState {
     },
     seaLevel: {
       id: "seaLevel",
-      label: "Rising Seas",
+      label: "Seas",
       title: "Rising seas affect coastlines.",
       description: (
         <>
@@ -592,18 +575,18 @@ function getLayerState(layer: ClimateLayerKey, year: number): LayerState {
     },
     emissions: {
       id: "emissions",
-      label: "CO2",
+      label: "Carbon",
       title: "Carbon concentration keeps climbing.",
       description: (
         <>
-          This view connects <GlossaryTerm term="carbon emissions" /> to atmospheric concentration, measured in <GlossaryTerm term="ppm" />, and possible future risk.
+          This view connects <GlossaryTerm term="carbon emissions" /> to atmospheric concentration, measured in <GlossaryTerm term="ppm" />, and long-term climate risk.
         </>
       ),
       year,
       stat: `${point.emissions.toFixed(0)} ppm`,
       statLabel: (
         <>
-          Atmospheric CO2 in <GlossaryTerm term="ppm" />
+          Atmospheric carbon in <GlossaryTerm term="ppm" />
         </>
       ),
       legend: "Warm pulsing markers show emissions concentration. Larger pulses indicate higher concentration.",
@@ -612,7 +595,7 @@ function getLayerState(layer: ClimateLayerKey, year: number): LayerState {
         { color: "#ff8a34", label: "Higher concentration" }
       ],
       overlayConfig: { mode: "emissions", value: Number(point.emissions), intensity: 1 },
-      tooltipTerms: ["carbon emissions", "ppm", "projection", "warming threshold"]
+      tooltipTerms: ["carbon emissions", "ppm"]
     }
   };
 
@@ -621,6 +604,10 @@ function getLayerState(layer: ClimateLayerKey, year: number): LayerState {
 
 function getRegionExplanation(country: CountryFocusTarget, layerState: LayerState) {
   const name = country.name;
+
+  if (layerState.id === "overview") {
+    return `${name} is selected on the natural Earth view. Choose a climate tab to see a specific data layer for this region.`;
+  }
 
   if (layerState.id === "temperature") {
     return `${name} is shown through the active temperature anomaly layer, connecting the selected region to the broader warming signal.`;
@@ -640,19 +627,8 @@ function getRegionExplanation(country: CountryFocusTarget, layerState: LayerStat
     return `${name} is viewed with the coastal risk layer, where cyan glow marks rising-water exposure around shorelines.`;
   }
 
-  return `${name} is connected to the CO2 layer, where pulsing markers indicate emissions concentration and the atmospheric driver behind long-term change.`;
+  return `${name} is connected to the Carbon layer, where pulsing markers indicate emissions concentration and the atmospheric driver behind long-term change.`;
 }
-
-function getShortSlideLabel(label: string) {
-  if (label === "Ice Loss") {
-    return "Ice Loss";
-  }
-  if (label === "Rising Seas") {
-    return "Seas";
-  }
-  return label;
-}
-
 function getPoint(year: number) {
   return climateSeries.find((point) => point.year === year) ?? climateSeries[climateSeries.length - 1];
 }

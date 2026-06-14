@@ -11,7 +11,7 @@ const highlights = [
   { icon: Globe, title: "Climate trends", text: "Warmth, emissions, and sea-level change presented as a cinematic story instead of a dashboard." },
   { icon: Waves, title: "Sea ice changes", text: "Use the timeline to see how the polar system changes over decades." },
   { icon: Flame, title: "Wildfire activity", text: "Explore heat, drought, and burn risk through guided visualization layers." },
-  { icon: CloudSun, title: "Future projections", text: "Compare scenario paths and understand that the future panels are explicitly labeled projections." }
+  { icon: CloudSun, title: "Scenario projections", text: "Compare scenario paths and understand that projection panels are explicitly labeled." }
 ];
 
 export function LandingPage() {
@@ -116,7 +116,7 @@ export function LandingPage() {
           <Card className="flex flex-col justify-between gap-5">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-cyan-100/64">What’s inside</p>
-              <h2 className="mt-3 font-display text-2xl text-white">Globe, timeline, stories, charts, regions, and future scenarios.</h2>
+              <h2 className="mt-3 font-display text-2xl text-white">Globe, timeline, stories, charts, regions, and scenario paths.</h2>
             </div>
             <Button href="/explorer" className="justify-between rounded-2xl px-4 py-3">
               Open the interactive exhibit

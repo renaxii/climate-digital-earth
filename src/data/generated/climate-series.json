@@ -10,10 +10,10 @@
       "countries": "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
     },
     "notes": [
-      "Temperature values are NASA GISTEMP annual global surface temperature anomalies in degrees Celsius.",
-      "Emissions layer uses NOAA Global Monitoring Laboratory annual mean atmospheric CO2 in ppm.",
+      "Warming values are NASA GISTEMP annual global surface anomalies in degrees Celsius.",
+      "Carbon layer uses NOAA Global Monitoring Laboratory annual mean atmospheric carbon concentration in ppm.",
       "Sea ice and sea level are persisted as annual observed indicator values and extrapolated after the latest shared observation year.",
-      "Wildfire is an educational pressure index derived from observed warming and CO2; it is not an observed burned-area measurement.",
+      "Wildfire is an educational pressure index derived from observed warming and carbon; it is not an observed burned-area measurement.",
       "Rows where observed is false are simple trend extensions for exhibit timeline continuity."
     ]
   },
